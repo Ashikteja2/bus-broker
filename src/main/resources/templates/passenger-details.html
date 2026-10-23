@@ -1,0 +1,264 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Passenger Details | Bus Broker</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px 12px;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #071426, #16324f);
+            color: white;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 20px auto;
+            padding: 28px;
+            background: #10223a;
+            border: 1px solid #d8b451;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #e4bd58;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #d2dbe5;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .summary {
+            padding: 18px;
+            margin: 24px 0;
+            background: #19334f;
+            border: 1px solid #294662;
+            border-radius: 10px;
+            line-height: 2;
+            overflow-wrap: anywhere;
+        }
+
+        .summary strong {
+            color: #e4bd58;
+        }
+
+        .total {
+            margin-top: 10px;
+            padding-top: 12px;
+            border-top: 1px solid #52667c;
+            font-size: 19px;
+        }
+
+        label {
+            display: block;
+            margin: 17px 0 7px;
+            font-weight: bold;
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #8293a7;
+            border-radius: 7px;
+            background: #ffffff;
+            color: #14253a;
+            font-size: 16px;
+        }
+
+        input:focus {
+            outline: 2px solid #d8b451;
+            border-color: #d8b451;
+        }
+
+        .hint {
+            display: block;
+            margin-top: 5px;
+            color: #c4d0dc;
+            font-size: 12px;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            margin-top: 25px;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #d8b451;
+            color: #071426;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #f0d47d;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: #e4bd58;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .notice {
+            margin-top: 20px;
+            color: #c4d0dc;
+            font-size: 12px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Passenger Details</h1>
+
+    <p class="subtitle">
+        Please enter your details to complete your bus booking.
+    </p>
+
+    <!-- Booking summary -->
+    <div class="summary">
+
+        <div>
+            <strong>Bus:</strong>
+            <span th:text="${busName}">Express Travels</span>
+        </div>
+
+        <div>
+            <strong>From:</strong>
+            <span th:text="${source}">Hyderabad</span>
+        </div>
+
+        <div>
+            <strong>To:</strong>
+            <span th:text="${destination}">Vijayawada</span>
+        </div>
+
+        <div>
+            <strong>Journey Date:</strong>
+            <span th:text="${journeyDate}">Journey Date</span>
+        </div>
+
+        <div>
+            <strong>Selected Seats:</strong>
+            <span th:text="${seats}">S1,S2</span>
+        </div>
+
+        <div>
+            <strong>Price per Seat:</strong>
+            ₹<span th:text="${price}">750</span>
+        </div>
+
+        <div class="total">
+            <strong>Total Amount:</strong>
+            ₹<span th:text="${total}">1500</span>
+        </div>
+
+    </div>
+
+    <!-- Submit passenger details to Spring Boot -->
+    <form th:action="@{/booking-confirmation}"
+          method="post"
+          id="passengerForm">
+
+        <!-- Booking information passed to the controller -->
+        <input type="hidden" name="source" th:value="${source}">
+        <input type="hidden" name="destination" th:value="${destination}">
+        <input type="hidden" name="journeyDate" th:value="${journeyDate}">
+        <input type="hidden" name="busName" th:value="${busName}">
+        <input type="hidden" name="seats" th:value="${seats}">
+        <input type="hidden" name="price" th:value="${price}">
+
+        <!-- Passenger name -->
+        <label for="passengerName">Passenger Full Name</label>
+        <input
+            type="text"
+            id="passengerName"
+            name="passengerName"
+            placeholder="Enter your full name"
+            maxlength="100"
+            autocomplete="name"
+            required>
+
+        <!-- Passenger age -->
+        <label for="age">Age</label>
+        <input
+            type="number"
+            id="age"
+            name="age"
+            min="1"
+            max="120"
+            placeholder="Enter your age"
+            required>
+
+        <!-- Passenger phone number -->
+        <label for="phone">Phone Number</label>
+        <input
+            type="tel"
+            id="phone"
+            name="phone"
+            pattern="[0-9]{10}"
+            minlength="10"
+            maxlength="10"
+            inputmode="numeric"
+            autocomplete="tel"
+            placeholder="Enter your 10-digit phone number"
+            title="Please enter exactly 10 digits"
+            required>
+
+        <small class="hint">
+            Enter a 10-digit mobile number without spaces.
+        </small>
+
+        <button type="submit" class="submit-btn">
+            Confirm Booking
+        </button>
+
+    </form>
+
+    <a class="back-link" href="javascript:history.back()">
+        ← Back to Seat Selection
+    </a>
+
+    <p class="notice">
+        Your booking will be saved to the Bus Broker database
+        when the server successfully processes your submission.
+    </p>
+
+</div>
+
+</body>
+</html>

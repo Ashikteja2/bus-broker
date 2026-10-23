@@ -1,0 +1,378 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Broker | Available Buses</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #f5f7fb;
+            background: #071421;
+        }
+
+        .page-background {
+            min-height: 100vh;
+            background:
+                linear-gradient(90deg, rgba(3,14,24,.88), rgba(3,14,24,.4)),
+                url('/css/image/bus-results-background.png') center/cover fixed;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1500px;
+            margin: auto;
+            padding: 28px 0 40px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 35px;
+        }
+
+        .logo {
+            color: #f6c66e;
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        a { text-decoration: none; }
+
+        .back {
+            color: #f6c66e;
+            font-weight: bold;
+        }
+
+        .heading {
+            font-size: clamp(36px, 5vw, 58px);
+            margin: 0 0 16px;
+        }
+
+        .gold { color: #f6c66e; }
+
+        .route {
+            margin-bottom: 30px;
+            font-size: 17px;
+            line-height: 1.8;
+        }
+
+        .bus-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .bus-card {
+            display: grid;
+            grid-template-columns: 190px minmax(170px, 1fr)
+                                   minmax(270px, 1.35fr)
+                                   145px 160px;
+            gap: 22px;
+            align-items: center;
+            padding: 22px;
+            min-width: 0;
+            border: 1px solid #2a3b4b;
+            border-radius: 17px;
+            background: rgba(10, 22, 34, .97);
+        }
+
+        .bus-card:first-child {
+            border-color: #d5a650;
+            background: rgba(30, 29, 29, .97);
+        }
+
+        .bus-image {
+            width: 100%;
+            height: 125px;
+            display: block;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .bus-name {
+            font-size: 22px;
+            line-height: 1.35;
+            margin: 0 0 12px;
+        }
+
+        .bus-type {
+            display: inline-block;
+            border: 1px solid #79613a;
+            border-radius: 20px;
+            padding: 8px 11px;
+            font-size: 13px;
+        }
+
+        .availability, .rating {
+            color: #c6d0db;
+            font-size: 13px;
+            margin: 10px 0 0;
+        }
+
+        .star { color: #f6c66e; }
+
+        .timing-section {
+            border-left: 1px solid #354454;
+            padding-left: 20px;
+            min-width: 0;
+        }
+
+        .timing-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 20px minmax(0, 1fr);
+            align-items: center;
+            gap: 5px;
+        }
+
+        .label {
+            color: #c4cbd5;
+            font-size: 11px;
+            line-height: 1.5;
+            margin: 0 0 9px;
+        }
+
+        .time {
+            font-size: 17px;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .arrow {
+            color: #f6c66e;
+            font-size: 19px;
+            text-align: center;
+        }
+
+        .duration {
+            color: #c4cbd5;
+            font-size: 12px;
+            margin: 15px 0 0;
+        }
+
+        .price-section {
+            border-left: 1px solid #354454;
+            padding-left: 20px;
+        }
+
+        .price {
+            color: #f6c66e;
+            font-size: 30px;
+            margin: 12px 0 0;
+            white-space: nowrap;
+        }
+
+        .select-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 58px;
+            padding: 12px 10px;
+            border-radius: 10px;
+            background: #f6c66e;
+            color: #111c29;
+            font-size: 14px;
+            font-weight: 800;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .select-button:hover {
+            background: #ffda8b;
+        }
+
+        .footer {
+            padding: 25px 0;
+            text-align: center;
+            color: #c4cbd5;
+            font-size: 13px;
+        }
+
+        @media (max-width: 1150px) {
+            .bus-card {
+                grid-template-columns: 150px minmax(150px, 1fr)
+                                     minmax(230px, 1.2fr);
+            }
+
+            .price-section {
+                border-left: 0;
+                padding-left: 0;
+            }
+
+            .select-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .container { width: 94%; }
+
+            .bus-card {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 15px;
+                padding: 17px;
+            }
+
+            .bus-image { height: 190px; }
+
+            .timing-section, .price-section {
+                border-left: 0;
+                padding-left: 0;
+            }
+
+            .select-button { min-height: 52px; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="page-background">
+    <main class="container">
+
+        <header class="topbar">
+            <div class="logo">BUS BROKER</div>
+            <a class="back" th:href="@{/}">← Back to Search</a>
+        </header>
+
+        <h1 class="heading">Find your <span class="gold">bus.</span></h1>
+
+        <div class="route">
+            <strong th:text="${source}">Bengaluru</strong>
+            <span class="gold"> → </span>
+            <strong th:text="${destination}">Vijayawada</strong>
+            <span class="gold"> | </span>
+            <span th:text="${journeyDate}">2026-10-31</span>
+        </div>
+
+        <div class="bus-list">
+
+            <article class="bus-card">
+                <img class="bus-image"
+                     src="/css/image/bus-background.png"
+                     alt="Express Travels bus">
+
+                <div>
+                    <h2 class="bus-name">Express Travels</h2>
+                    <span class="bus-type">❄ AC Sleeper</span>
+                    <p class="availability">♿ 12 seats available</p>
+                    <p class="rating"><span class="star">★ 4.2</span> (320 reviews)</p>
+                </div>
+
+                <div class="timing-section">
+                    <div class="timing-row">
+                        <div>
+                            <p class="label">DEPARTURE</p>
+                            <h3 class="time">09:00 AM</h3>
+                        </div>
+                        <span class="arrow">→</span>
+                        <div>
+                            <p class="label">ARRIVAL</p>
+                            <h3 class="time">02:00 PM</h3>
+                        </div>
+                    </div>
+                    <p class="duration">◷ Duration: 5h 0m</p>
+                </div>
+
+                <div class="price-section">
+                    <p class="label">PRICE PER PASSENGER</p>
+                    <h2 class="price">₹750</h2>
+                </div>
+
+                <a class="select-button"
+                   th:href="@{/seats(source=${source},destination=${destination},journeyDate=${journeyDate},busName='Express Travels',price=750)}">
+                    Select Seats →
+                </a>
+            </article>
+
+            <article class="bus-card">
+                <img class="bus-image"
+                     src="/css/image/bus-results-background.png"
+                     alt="Royal Roadways bus">
+
+                <div>
+                    <h2 class="bus-name">Royal Roadways</h2>
+                    <span class="bus-type">❄ AC Seater</span>
+                    <p class="availability">♿ 18 seats available</p>
+                    <p class="rating"><span class="star">★ 4.5</span> (410 reviews)</p>
+                </div>
+
+                <div class="timing-section">
+                    <div class="timing-row">
+                        <div>
+                            <p class="label">DEPARTURE</p>
+                            <h3 class="time">10:30 AM</h3>
+                        </div>
+                        <span class="arrow">→</span>
+                        <div>
+                            <p class="label">ARRIVAL</p>
+                            <h3 class="time">03:30 PM</h3>
+                        </div>
+                    </div>
+                    <p class="duration">◷ Duration: 5h 0m</p>
+                </div>
+
+                <div class="price-section">
+                    <p class="label">PRICE PER PASSENGER</p>
+                    <h2 class="price">₹900</h2>
+                </div>
+
+                <a class="select-button"
+                   th:href="@{/seats(source=${source},destination=${destination},journeyDate=${journeyDate},busName='Royal Roadways',price=900)}">
+                    Select Seats →
+                </a>
+            </article>
+
+            <article class="bus-card">
+                <img class="bus-image"
+                     src="/css/image/bus-background.png"
+                     alt="City Connect bus">
+
+                <div>
+                    <h2 class="bus-name">City Connect</h2>
+                    <span class="bus-type">Non-AC Sleeper</span>
+                    <p class="availability">♿ 9 seats available</p>
+                    <p class="rating"><span class="star">★ 4.0</span> (180 reviews)</p>
+                </div>
+
+                <div class="timing-section">
+                    <div class="timing-row">
+                        <div>
+                            <p class="label">DEPARTURE</p>
+                            <h3 class="time">07:00 PM</h3>
+                        </div>
+                        <span class="arrow">→</span>
+                        <div>
+                            <p class="label">ARRIVAL</p>
+                            <h3 class="time">12:00 AM</h3>
+                        </div>
+                    </div>
+                    <p class="duration">◷ Duration: 5h 0m</p>
+                </div>
+
+                <div class="price-section">
+                    <p class="label">PRICE PER PASSENGER</p>
+                    <h2 class="price">₹650</h2>
+                </div>
+
+                <a class="select-button"
+                   th:href="@{/seats(source=${source},destination=${destination},journeyDate=${journeyDate},busName='City Connect',price=650)}">
+                    Select Seats →
+                </a>
+            </article>
+
+        </div>
+
+        <footer class="footer">
+            © 2026 Bus Broker. All rights reserved.
+        </footer>
+    </main>
+</div>
+</body>
+</html>

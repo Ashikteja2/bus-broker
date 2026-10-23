@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Select Seats | Bus Broker</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+            background: linear-gradient(135deg, #061426, #102b49);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 850px;
+            margin: 35px auto;
+        }
+
+        .panel {
+            padding: 30px;
+            background: rgba(10, 28, 49, 0.97);
+            border: 1px solid #c9a64b;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #e4bd58;
+            text-align: center;
+        }
+
+        h2 {
+            color: #e4bd58;
+            text-align: center;
+        }
+
+        .bus-info {
+            margin: 25px 0;
+            padding: 18px;
+            line-height: 2;
+            background: #142d48;
+            border-radius: 10px;
+        }
+
+        .bus-info strong {
+            color: #e4bd58;
+        }
+
+        .driver-area {
+            width: 260px;
+            margin: 20px auto;
+            padding: 12px;
+            text-align: center;
+            color: #e4bd58;
+            border: 1px dashed #c9a64b;
+            border-radius: 8px;
+        }
+
+        .seat-layout {
+            display: grid;
+            grid-template-columns: repeat(4, 58px);
+            gap: 12px;
+            justify-content: center;
+            margin: 25px auto;
+        }
+
+        .seat {
+            width: 58px;
+            height: 48px;
+            border: 1px solid #d8b451;
+            border-radius: 9px;
+            background: #203b58;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .seat:hover:not(:disabled) {
+            background: #345675;
+        }
+
+        .seat.selected {
+            background: #d8b451;
+            color: #071426;
+            border-color: #f5d87b;
+        }
+
+        .seat.unavailable {
+            background: #777777;
+            color: #eeeeee;
+            border-color: #777777;
+            cursor: not-allowed;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 18px;
+            margin: 20px 0;
+            color: #dddddd;
+            font-size: 14px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .legend-box {
+            width: 17px;
+            height: 17px;
+            border-radius: 4px;
+        }
+
+        .available-box {
+            background: #203b58;
+            border: 1px solid #d8b451;
+        }
+
+        .selected-box {
+            background: #d8b451;
+        }
+
+        .unavailable-box {
+            background: #777777;
+        }
+
+        .summary {
+            margin: 25px 0;
+            padding: 20px;
+            background: #142d48;
+            border-radius: 10px;
+            text-align: center;
+            line-height: 2;
+        }
+
+        .summary span {
+            color: #e4bd58;
+            font-weight: bold;
+        }
+
+        .continue-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #d8b451;
+            color: #071426;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .continue-btn:hover {
+            background: #f0d47d;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 18px;
+            color: #e4bd58;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                width: 95%;
+                margin: 15px auto;
+            }
+
+            .panel {
+                padding: 18px 12px;
+            }
+
+            .seat-layout {
+                grid-template-columns: repeat(4, 48px);
+                gap: 9px;
+            }
+
+            .seat {
+                width: 48px;
+                height: 43px;
+            }
+
+            .driver-area {
+                width: 220px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="panel">
+
+        <h1>Select Your Seats</h1>
+
+        <div class="bus-info">
+            <div>
+                <strong>Bus:</strong>
+                <span th:text="${busName}">Express Travels</span>
+            </div>
+
+            <div>
+                <strong>From:</strong>
+                <span th:text="${source}">Hyderabad</span>
+            </div>
+
+            <div>
+                <strong>To:</strong>
+                <span th:text="${destination}">Vijayawada</span>
+            </div>
+
+            <div>
+                <strong>Journey Date:</strong>
+                <span th:text="${journeyDate}">Journey Date</span>
+            </div>
+
+            <div>
+                <strong>Price per seat:</strong>
+                ₹<span th:text="${price}">750</span>
+            </div>
+        </div>
+
+        <h2>Choose Your Seats</h2>
+
+        <div class="driver-area">FRONT — DRIVER</div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <span class="legend-box available-box"></span>
+                Available
+            </div>
+
+            <div class="legend-item">
+                <span class="legend-box selected-box"></span>
+                Selected
+            </div>
+
+            <div class="legend-item">
+                <span class="legend-box unavailable-box"></span>
+                Unavailable
+            </div>
+        </div>
+
+        <form th:action="@{/passenger-details}"
+              method="get"
+              id="seatForm">
+
+            <input type="hidden" name="source" th:value="${source}">
+            <input type="hidden" name="destination" th:value="${destination}">
+            <input type="hidden" name="journeyDate" th:value="${journeyDate}">
+            <input type="hidden" name="busName" th:value="${busName}">
+            <input type="hidden" name="price" th:value="${price}">
+            <input type="hidden" name="seats" id="selectedSeats">
+
+            <div class="seat-layout" id="seatLayout"></div>
+
+            <div class="summary">
+                Selected Seats:
+                <span id="seatCount">0</span>
+
+                <br>
+
+                Seat Numbers:
+                <span id="seatNumbers">None</span>
+
+                <br>
+
+                Total Price:
+                ₹<span id="totalPrice">0</span>
+            </div>
+
+            <button type="submit" class="continue-btn">
+                Continue to Passenger Details
+            </button>
+        </form>
+
+        <a class="back-link" th:href="@{/}">
+            ← Back to Home
+        </a>
+
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const pricePerSeat = Number(/*[[${price}]]*/ 750);
+
+    // Demo unavailable seats
+    const unavailableSeats = [3, 8, 14];
+
+    const selectedSeats = new Set();
+
+    const seatLayout = document.getElementById("seatLayout");
+
+    // Create 40 seats
+    for (let i = 1; i <= 40; i++) {
+
+        const seat = document.createElement("button");
+
+        seat.type = "button";
+        seat.textContent = "S" + i;
+        seat.className = "seat";
+        seat.dataset.seat = "S" + i;
+
+        if (unavailableSeats.includes(i)) {
+
+            seat.classList.add("unavailable");
+            seat.disabled = true;
+            seat.title = "This seat is unavailable";
+
+        } else {
+
+            seat.addEventListener("click", function () {
+
+                const seatNumber = this.dataset.seat;
+
+                if (selectedSeats.has(seatNumber)) {
+
+                    selectedSeats.delete(seatNumber);
+                    this.classList.remove("selected");
+
+                } else {
+
+                    selectedSeats.add(seatNumber);
+                    this.classList.add("selected");
+
+                }
+
+                updateSummary();
+            });
+        }
+
+        seatLayout.appendChild(seat);
+    }
+
+    function updateSummary() {
+
+        const seats = Array.from(selectedSeats).sort((a, b) => {
+            return Number(a.substring(1)) - Number(b.substring(1));
+        });
+
+        document.getElementById("selectedSeats").value =
+            seats.join(",");
+
+        document.getElementById("seatCount").textContent =
+            seats.length;
+
+        document.getElementById("seatNumbers").textContent =
+            seats.length > 0 ? seats.join(", ") : "None";
+
+        document.getElementById("totalPrice").textContent =
+            seats.length * pricePerSeat;
+    }
+
+    // Do not continue without selecting at least one seat
+    document.getElementById("seatForm").addEventListener(
+        "submit",
+        function (event) {
+
+            if (selectedSeats.size === 0) {
+                event.preventDefault();
+                alert("Please select at least one available seat.");
+            }
+        }
+    );
+</script>
+
+</body>
+</html>

@@ -1,0 +1,202 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Broker | Travel Beautifully</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="home-page">
+
+<header class="site-header">
+    <a class="brand" th:href="@{/}">BUS <span>BROKER</span></a>
+    <nav class="main-nav">
+        <a th:href="@{/}">Home</a>
+        <a href="#destinations">Destinations</a>
+        <a href="#why-us">Why Us</a>
+    </nav>
+    <a class="header-button" href="#booking">Book a trip <span>↗</span></a>
+</header>
+
+<main>
+    <section class="hero">
+        <div class="hero-shade"></div>
+
+        <div class="hero-content">
+            <p class="eyebrow">YOUR NEXT JOURNEY</p>
+            <h1>Go beyond.<br>Travel <span>beautifully.</span></h1>
+            <p class="hero-description">
+                Discover beautiful journeys, comfortable buses and a better
+                way to get where you're going.
+            </p>
+
+            <div class="hero-benefits">
+                <span>✦ Carefully selected buses</span>
+                <span>✦ Simple booking</span>
+                <span>✦ Comfortable journeys</span>
+            </div>
+        </div>
+
+        <div class="booking-card" id="booking">
+            <p class="eyebrow">PLAN YOUR JOURNEY</p>
+            <h2>Where to next?</h2>
+            <p class="muted">Find the right bus for your next trip.</p>
+
+            <form th:action="@{/search}" method="get" class="booking-form">
+                <label for="source">From</label>
+                <select id="source" name="source" required>
+                    <option value="">Select departure city</option>
+                    <option>Hyderabad</option>
+                    <option>Bengaluru</option>
+                    <option>Chennai</option>
+                    <option>Visakhapatnam</option>
+                    <option>Vijayawada</option>
+                    <option>Guntur</option>
+                    <option>Pune</option>
+                    <option>Mumbai</option>
+                    <option>Delhi</option>
+                    <option>Tirupati</option>
+                    <option>Kochi</option>
+                    <option>Coimbatore</option>
+                    <option>Mysuru</option>
+                    <option>Warangal</option>
+                    <option>Rajahmundry</option>
+                </select>
+
+                <label for="destination">To</label>
+                <select id="destination" name="destination" required>
+                    <option value="">Select destination city</option>
+                    <option>Hyderabad</option>
+                    <option>Bengaluru</option>
+                    <option>Chennai</option>
+                    <option>Visakhapatnam</option>
+                    <option>Vijayawada</option>
+                    <option>Guntur</option>
+                    <option>Pune</option>
+                    <option>Mumbai</option>
+                    <option>Delhi</option>
+                    <option>Tirupati</option>
+                    <option>Kochi</option>
+                    <option>Coimbatore</option>
+                    <option>Mysuru</option>
+                    <option>Warangal</option>
+                    <option>Rajahmundry</option>
+                </select>
+
+                <label for="journeyDate">Journey date</label>
+                <input type="date" id="journeyDate" name="journeyDate" required>
+
+                <button class="gold-button search-button" type="submit">
+                    Search buses <span>→</span>
+                </button>
+            </form>
+
+            <p class="secure-note">✦ Your next great journey starts here.</p>
+        </div>
+    </section>
+
+    <section class="destinations section-wrap" id="destinations">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">EXPLORE INDIA</p>
+                <h2>Journeys worth taking.</h2>
+                <p class="muted">Discover some of our favourite destinations.</p>
+            </div>
+        </div>
+
+        <div class="destination-grid">
+            <a class="destination-card destination-hyderabad"
+               th:href="@{/(source='Hyderabad')}">
+                <span class="destination-number">01 / CITY LIFE</span>
+                <h3>Hyderabad</h3>
+                <p>Discover the city of pearls</p>
+            </a>
+
+            <a class="destination-card destination-bengaluru"
+               th:href="@{/(source='Bengaluru')}">
+                <span class="destination-number">02 / URBAN ESCAPE</span>
+                <h3>Bengaluru</h3>
+                <p>Explore the garden city</p>
+            </a>
+
+            <a class="destination-card destination-vizag"
+               th:href="@{/(source='Visakhapatnam')}">
+                <span class="destination-number">03 / COASTAL BEAUTY</span>
+                <h3>Visakhapatnam</h3>
+                <p>Find your coastal getaway</p>
+            </a>
+
+            <a class="destination-card destination-chennai"
+               th:href="@{/(source='Chennai')}">
+                <span class="destination-number">04 / CULTURE &amp; COAST</span>
+                <h3>Chennai</h3>
+                <p>Experience culture and beaches</p>
+            </a>
+        </div>
+    </section>
+
+    <section class="why-section section-wrap" id="why-us">
+        <p class="eyebrow">THE BUS BROKER DIFFERENCE</p>
+        <h2>A better way to get there.</h2>
+        <p class="muted">Thoughtful features for a smoother journey.</p>
+
+        <div class="feature-grid">
+            <article class="feature-card">
+                <span class="feature-icon">✦</span>
+                <h3>Comfort first</h3>
+                <p>Find a journey that suits your travel needs.</p>
+            </article>
+            <article class="feature-card">
+                <span class="feature-icon">↗</span>
+                <h3>Easy booking</h3>
+                <p>Search your route and journey date in one place.</p>
+            </article>
+            <article class="feature-card">
+                <span class="feature-icon">◇</span>
+                <h3>More choice</h3>
+                <p>Compare available bus options and fares.</p>
+            </article>
+        </div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <a class="brand" th:href="@{/}">BUS <span>BROKER</span></a>
+    <p>Find your next journey. Travel beautifully.</p>
+    <p class="footer-small">© 2026 Bus Broker</p>
+</footer>
+
+<script>
+    const sourceSelect = document.getElementById("source");
+    const destinationSelect = document.getElementById("destination");
+    const dateInput = document.getElementById("journeyDate");
+
+    const today = new Date();
+    const localToday = new Date(
+        today.getTime() - today.getTimezoneOffset() * 60000
+    ).toISOString().split("T")[0];
+
+    dateInput.min = localToday;
+
+    sourceSelect.addEventListener("change", function () {
+        Array.from(destinationSelect.options).forEach(function (option) {
+            option.disabled =
+                option.value !== "" && option.value === sourceSelect.value;
+        });
+
+        if (destinationSelect.value === sourceSelect.value) {
+            destinationSelect.value = "";
+        }
+    });
+
+    document.querySelector(".booking-form").addEventListener("submit", function (event) {
+        if (sourceSelect.value === destinationSelect.value) {
+            event.preventDefault();
+            alert("Departure and destination cities must be different.");
+        }
+    });
+</script>
+
+</body>
+</html>
