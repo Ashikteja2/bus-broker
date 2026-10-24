@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Confirmation | Bus Broker</title>
+    <title>Booking Confirmation - Bus Broker</title>
 
     <style>
         * {
@@ -13,142 +13,242 @@
 
         body {
             margin: 0;
-            padding: 25px 12px;
-            min-height: 100vh;
+            padding: 40px 15px;
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #071426, #183653);
+            background: linear-gradient(135deg, #071629, #173653);
             color: white;
         }
 
-        .container {
-            max-width: 650px;
-            margin: 35px auto;
-            padding: 30px;
-            background: #10223a;
-            border: 1px solid #d8b451;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .success {
-            text-align: center;
-            font-size: 55px;
+        .confirmation-container {
+            max-width: 715px;
+            margin: 0 auto;
+            padding: 30px 32px;
+            background: #10243d;
+            border: 1px solid #d8b34e;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
         }
 
         h1 {
-            color: #e4bd58;
+            margin-top: 0;
+            color: #e7bd4e;
             text-align: center;
+            font-size: 36px;
         }
 
-        .message {
+        .success-icon {
+            text-align: center;
+            font-size: 48px;
+        }
+
+        .subtitle {
+            margin-bottom: 28px;
             text-align: center;
             line-height: 1.7;
-            color: #dddddd;
+            font-size: 17px;
         }
 
-        .details {
-            margin-top: 25px;
-            padding: 20px;
-            background: #19334f;
-            border-radius: 10px;
-            line-height: 2;
+        .booking-details {
+            padding: 20px 22px;
+            background: #1b3653;
+            border-radius: 12px;
+        }
+
+        .detail {
+            margin: 10px 0;
+            line-height: 1.5;
             overflow-wrap: anywhere;
         }
 
-        .details strong {
-            color: #e4bd58;
-        }
-
-        .home-btn {
-            display: block;
-            margin-top: 25px;
-            padding: 14px;
-            border-radius: 8px;
-            background: #d8b451;
-            color: #071426;
-            text-align: center;
-            text-decoration: none;
+        .label {
+            color: #f2bd45;
             font-weight: bold;
         }
 
-        .home-btn:hover {
-            background: #f0d47d;
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 28px;
         }
 
-        .note {
-            margin-top: 20px;
+        .action-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
             text-align: center;
-            color: #c9c9c9;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .download-button {
+            background-color: #198754;
+            color: white;
+        }
+
+        .download-button:hover {
+            background-color: #146c43;
+        }
+
+        .home-button {
+            background-color: #e0b94f;
+            color: #071629;
+        }
+
+        .home-button:hover {
+            background-color: #c9a33d;
+        }
+
+        .print-button {
+            background-color: #315579;
+            color: white;
+        }
+
+        .footer {
+            margin-top: 22px;
+            text-align: center;
+            color: #d7e0ec;
             font-size: 13px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .confirmation-container {
+                padding: 24px 18px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+        }
+
+        @media print {
+            body {
+                padding: 0;
+                background: white;
+                color: black;
+            }
+
+            .confirmation-container {
+                max-width: 100%;
+                border: 1px solid #999;
+                box-shadow: none;
+                background: white;
+                color: black;
+            }
+
+            .booking-details {
+                background: white;
+                border: 1px solid #ddd;
+            }
+
+            .label, h1 {
+                color: black;
+            }
+
+            .button-container, .footer {
+                display: none;
+            }
         }
     </style>
 </head>
 
 <body>
-<div class="container">
+<div class="confirmation-container">
 
-    <div class="success">✓</div>
-
+    <div class="success-icon">&#10003;</div>
     <h1>Booking Confirmed!</h1>
 
-    <p class="message">
+    <p class="subtitle">
         Thank you for booking with Bus Broker.
-        Your demo booking confirmation is displayed below.
+        Your booking details are displayed below.
     </p>
 
-    <div class="details">
-        <div>
-            <strong>Passenger Name:</strong>
-            <span th:text="${passengerName}"></span>
+    <div class="booking-details">
+
+        <div class="detail">
+            <span class="label">Booking ID:</span>
+            <span th:text="${bookingId}">1</span>
         </div>
 
-        <div>
-            <strong>Age:</strong>
-            <span th:text="${age}"></span>
+        <div class="detail">
+            <span class="label">Passenger Name:</span>
+            <span th:text="${passengerName}">Passenger</span>
         </div>
 
-        <div>
-            <strong>Phone:</strong>
-            <span th:text="${phone}"></span>
+        <div class="detail">
+            <span class="label">Age:</span>
+            <span th:text="${age}">25</span>
         </div>
 
-        <div>
-            <strong>Bus:</strong>
-            <span th:text="${busName}"></span>
+        <div class="detail">
+            <span class="label">Phone:</span>
+            <span th:text="${phone}">0000000000</span>
         </div>
 
-        <div>
-            <strong>From:</strong>
-            <span th:text="${source}"></span>
+        <div class="detail">
+            <span class="label">Bus:</span>
+            <span th:text="${busName}">Express Travels</span>
         </div>
 
-        <div>
-            <strong>To:</strong>
-            <span th:text="${destination}"></span>
+        <div class="detail">
+            <span class="label">From:</span>
+            <span th:text="${source}">Kochi</span>
         </div>
 
-        <div>
-            <strong>Journey Date:</strong>
-            <span th:text="${journeyDate}"></span>
+        <div class="detail">
+            <span class="label">To:</span>
+            <span th:text="${destination}">Tirupati</span>
         </div>
 
-        <div>
-            <strong>Selected Seats:</strong>
-            <span th:text="${seats}"></span>
+        <div class="detail">
+            <span class="label">Journey Date:</span>
+            <span th:text="${journeyDate}">2026-10-31</span>
         </div>
 
-        <div>
-            <strong>Total Amount:</strong>
-            ₹<span th:text="${total}"></span>
+        <div class="detail">
+            <span class="label">Selected Seats:</span>
+            <span th:text="${seats}">S25,S27</span>
         </div>
+
+        <div class="detail">
+            <span class="label">Total Amount:</span>
+            ₹<span th:text="${total}">1500</span>
+        </div>
+
     </div>
 
-    <a class="home-btn" th:href="@{/}">
-        Back to Home
-    </a>
+    <div class="button-container">
 
-    <p class="note">
-        This is a demo confirmation. No payment or permanent booking has been recorded.
+        <a th:if="${bookingId != null}"
+           th:href="@{/ticket/{id}(id=${bookingId})}"
+           class="action-button download-button">
+            &#11015; Download Ticket
+        </a>
+
+        <a href="/" class="action-button home-button">
+            Back to Home
+        </a>
+
+        <button type="button"
+                class="action-button print-button"
+                onclick="window.print()">
+            Print Ticket
+        </button>
+
+    </div>
+
+    <p class="footer">
+        Please save your ticket for your journey.
+        Thank you for choosing Bus Broker!
     </p>
 
 </div>

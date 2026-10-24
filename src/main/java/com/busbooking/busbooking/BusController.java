@@ -1,11 +1,22 @@
 
 package com.busbooking.busbooking;
 
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -17,7 +28,6 @@ public class BusController {
         this.bookingRepository = bookingRepository;
     }
 
-    // Search for buses
     @GetMapping("/search")
     public String searchBuses(
             @RequestParam("source") String source,
@@ -32,7 +42,6 @@ public class BusController {
         return "search-results";
     }
 
-    // Display seat selection
     @GetMapping("/seats")
     public String showSeats(
             @RequestParam("source") String source,
@@ -51,7 +60,6 @@ public class BusController {
         return "seats";
     }
 
-    // Display passenger details
     @GetMapping("/passenger-details")
     public String passengerDetails(
             @RequestParam("source") String source,
@@ -80,7 +88,6 @@ public class BusController {
         return "passenger-details";
     }
 
-    // Save booking to MySQL, then display confirmation
     @PostMapping("/booking-confirmation")
     public String bookingConfirmation(
             @RequestParam("source") String source,
@@ -95,7 +102,6 @@ public class BusController {
             Model model,
             RedirectAttributes redirectAttributes) {
 
-        // Basic input checks
         if (source.isBlank()
                 || destination.isBlank()
                 || journeyDate.isBlank()
@@ -115,28 +121,65 @@ public class BusController {
             return "redirect:/";
         }
 
-        // Calculate total on the server
-        String[] seatArray = seats.split(",");
-        int seatCount = seatArray.length;
-        int total = seatCount * price;
+        // Validate selected seats and remove duplicates
+        Set<String> selectedSeats = new LinkedHashSet<>();
 
-        // Create a booking record
+        for (String seat : seats.split(",")) {
+            String cleanSeat = seat.trim();
+
+            if (cleanSeat.isEmpty()
+                    || !cleanSeat.matches("[A-Za-z0-9-]+")
+                    || !selectedSeats.add(cleanSeat)) {
+
+                model.addAttribute("errorMessage",
+                        "Please check your seat selection.");
+                return "passenger-details";
+            }
+        }
+
+        // Check whether any selected seat is already booked
+        List<Booking> existingBookings =
+                bookingRepository.findAllByBusNameAndJourneyDate(
+                        busName.trim(), journeyDate.trim());
+
+        for (Booking existing : existingBookings) {
+            for (String bookedSeat : existing.getSeats().split(",")) {
+                if (selectedSeats.contains(bookedSeat.trim())) {
+                    model.addAttribute("errorMessage",
+                            "Seat " + bookedSeat.trim()
+                            + " is already booked. Please select another seat.");
+                    model.addAttribute("source", source);
+                    model.addAttribute("destination", destination);
+                    model.addAttribute("journeyDate", journeyDate);
+                    model.addAttribute("busName", busName);
+                    model.addAttribute("seats", seats);
+                    model.addAttribute("price", price);
+                    model.addAttribute("total", selectedSeats.size() * price);
+                    model.addAttribute("passengerName", passengerName);
+                    model.addAttribute("age", age);
+                    model.addAttribute("phone", phone);
+
+                    return "passenger-details";
+                }
+            }
+        }
+
+        int total = selectedSeats.size() * price;
+
         Booking booking = new Booking();
-        booking.setSource(source);
-        booking.setDestination(destination);
-        booking.setJourneyDate(journeyDate);
-        booking.setBusName(busName);
-        booking.setSeats(seats);
+        booking.setSource(source.trim());
+        booking.setDestination(destination.trim());
+        booking.setJourneyDate(journeyDate.trim());
+        booking.setBusName(busName.trim());
+        booking.setSeats(String.join(",", selectedSeats));
         booking.setPricePerSeat(price);
         booking.setTotal(total);
         booking.setPassengerName(passengerName.trim());
         booking.setAge(age);
         booking.setPhone(phone);
 
-        // Save permanently in MySQL
         Booking savedBooking = bookingRepository.save(booking);
 
-        // Show the saved booking details
         model.addAttribute("bookingId", savedBooking.getId());
         model.addAttribute("source", savedBooking.getSource());
         model.addAttribute("destination", savedBooking.getDestination());
@@ -149,5 +192,59 @@ public class BusController {
         model.addAttribute("phone", savedBooking.getPhone());
 
         return "booking-confirmation";
+    }
+
+    // Download a ticket for a saved booking
+    @GetMapping("/ticket/{id}")
+    public ResponseEntity<byte[]> downloadTicket(@PathVariable Long id) {
+
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Booking not found"));
+
+        String ticket = """
+                ========================================
+                       BUS BOOKING TICKET
+                ========================================
+
+                Booking ID: %s
+                Passenger Name: %s
+                Age: %d
+                Phone: %s
+
+                Bus: %s
+                Source: %s
+                Destination: %s
+                Journey Date: %s
+                Seats: %s
+
+                Price Per Seat: Rs. %d
+                Total Fare: Rs. %d
+
+                ========================================
+                       Thank you for booking!
+                ========================================
+                """.formatted(
+                booking.getId(),
+                booking.getPassengerName(),
+                booking.getAge(),
+                booking.getPhone(),
+                booking.getBusName(),
+                booking.getSource(),
+                booking.getDestination(),
+                booking.getJourneyDate(),
+                booking.getSeats(),
+                booking.getPricePerSeat(),
+                booking.getTotal());
+
+        byte[] file = ticket.getBytes(StandardCharsets.UTF_8);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"ticket-"
+                                + booking.getId() + ".txt\"")
+                .contentType(MediaType.TEXT_PLAIN)
+                .contentLength(file.length)
+                .body(file);
     }
 }
