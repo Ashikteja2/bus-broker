@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Payment - Bus Broker</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #071629, #173653);
+            color: white;
+        }
+
+        .payment-card {
+            max-width: 520px;
+            margin: 25px auto;
+            padding: 30px;
+            background: #10243d;
+            border: 1px solid #d8b34e;
+            border-radius: 16px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #e7bd4e;
+        }
+
+        .notice {
+            padding: 14px;
+            background: #1b3653;
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+
+        .amount {
+            margin: 25px 0;
+            text-align: center;
+            color: #e7bd4e;
+            font-size: 34px;
+            font-weight: bold;
+        }
+
+        .detail {
+            margin: 14px 0;
+            overflow-wrap: anywhere;
+        }
+
+        .label {
+            color: #f2bd45;
+            font-weight: bold;
+        }
+
+        .pay-button, .back-button {
+            display: block;
+            width: 100%;
+            margin-top: 14px;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .pay-button {
+            background: #198754;
+            color: white;
+        }
+
+        .back-button {
+            background: #e0b94f;
+            color: #071629;
+        }
+
+        .error {
+            padding: 12px;
+            background: #ffe5e5;
+            color: #a00000;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="payment-card">
+
+    <h1>Bus Broker</h1>
+    <h2>Demo Payment</h2>
+
+    <p class="notice">
+        This is a simulated payment for testing your project.
+        No real money will be charged. Clicking the button below
+        simulates successful payment; it does not verify a real transaction.
+    </p>
+
+    <p class="error"
+       th:if="${errorMessage}"
+       th:text="${errorMessage}">
+    </p>
+
+    <div class="amount">
+        ₹<span th:text="${total}">1000</span>
+    </div>
+
+    <div class="detail">
+        <span class="label">Passenger:</span>
+        <span th:text="${passengerName}"></span>
+    </div>
+
+    <div class="detail">
+        <span class="label">Bus:</span>
+        <span th:text="${busName}"></span>
+    </div>
+
+    <div class="detail">
+        <span class="label">Route:</span>
+        <span th:text="${source}"></span>
+        to
+        <span th:text="${destination}"></span>
+    </div>
+
+    <div class="detail">
+        <span class="label">Journey Date:</span>
+        <span th:text="${journeyDate}"></span>
+    </div>
+
+    <div class="detail">
+        <span class="label">Seats:</span>
+        <span th:text="${seats}"></span>
+    </div>
+
+    <form th:action="@{/demo-payment-success}" method="post">
+        <input type="hidden" name="source" th:value="${source}">
+        <input type="hidden" name="destination" th:value="${destination}">
+        <input type="hidden" name="journeyDate" th:value="${journeyDate}">
+        <input type="hidden" name="busName" th:value="${busName}">
+        <input type="hidden" name="seats" th:value="${seats}">
+        <input type="hidden" name="price" th:value="${price}">
+        <input type="hidden" name="passengerName" th:value="${passengerName}">
+        <input type="hidden" name="age" th:value="${age}">
+        <input type="hidden" name="phone" th:value="${phone}">
+
+        <button class="pay-button" type="submit">
+            Pay Now (Demo)
+        </button>
+    </form>
+
+    <a class="back-button" th:href="@{/}">
+        Cancel and Return Home
+    </a>
+
+</div>
+</body>
+</html>

@@ -108,6 +108,10 @@
             color: white;
         }
 
+        .print-button:hover {
+            background-color: #24415e;
+        }
+
         .footer {
             margin-top: 22px;
             text-align: center;
@@ -180,6 +184,16 @@
         </div>
 
         <div class="detail">
+            <span class="label">Payment Mode:</span>
+            <span th:text="${paymentMode}">Demo Payment</span>
+        </div>
+
+        <div class="detail">
+            <span class="label">Payment Status:</span>
+            <span th:text="${paymentStatus}">SIMULATED SUCCESS</span>
+        </div>
+
+        <div class="detail">
             <span class="label">Passenger Name:</span>
             <span th:text="${passengerName}">Passenger</span>
         </div>
@@ -249,6 +263,8 @@
     <p class="footer">
         Please save your ticket for your journey.
         Thank you for choosing Bus Broker!
+        <br>
+        Demo payment only. No real payment was processed.
     </p>
 
 </div>
