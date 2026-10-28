@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Bus Search Results - Bus Broker</title>
 
     <style>
@@ -15,12 +16,15 @@
             margin: 0;
             font-family: Arial, sans-serif;
             color: #172b45;
+
+            /* Bus background image */
             background-image:
                 linear-gradient(
-                    rgba(240, 245, 252, 0.80),
-                    rgba(240, 245, 252, 0.80)
+                    rgba(240, 245, 252, 0.45),
+                    rgba(240, 245, 252, 0.45)
                 ),
-                url('/images/bus-background.jpg');
+                url('/css/image/bus-results-background.png');
+
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -29,7 +33,7 @@
         }
 
         header {
-            background: #173f70;
+            background: rgba(23, 63, 112, 0.95);
             color: white;
             padding: 24px 8%;
         }
@@ -52,9 +56,10 @@
 
         .route-card,
         .bus-card {
-            background: rgba(255, 255, 255, 0.94);
+            background: rgba(255, 255, 255, 0.92);
             border-radius: 14px;
-            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.10);
+            backdrop-filter: blur(3px);
         }
 
         .route-card {
@@ -66,6 +71,7 @@
             margin: 0 0 12px;
             font-size: 25px;
             font-weight: bold;
+            color: #172b45;
         }
 
         .journey-date {
@@ -86,6 +92,11 @@
             gap: 20px;
             padding: 25px;
             margin-bottom: 18px;
+            transition: transform 0.2s ease;
+        }
+
+        .bus-card:hover {
+            transform: translateY(-3px);
         }
 
         .bus-info {
@@ -126,6 +137,7 @@
             border-radius: 8px;
             text-align: center;
             white-space: nowrap;
+            transition: background 0.2s ease;
         }
 
         .select-button:hover {
@@ -138,6 +150,13 @@
             color: #173f70;
             font-weight: bold;
             text-decoration: none;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px 16px;
+            border-radius: 8px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
         }
 
         @media (max-width: 600px) {
@@ -145,9 +164,17 @@
                 padding: 22px 5%;
             }
 
+            header h1 {
+                font-size: 26px;
+            }
+
             main {
                 width: 92%;
                 margin: 22px auto;
+            }
+
+            .route-card {
+                padding: 22px;
             }
 
             .bus-card {
@@ -180,6 +207,7 @@
 
 <main>
 
+    <!-- Journey details -->
     <section class="route-card">
         <h2 class="route">
             <span th:text="${source}">Pune</span>
@@ -193,16 +221,21 @@
         </p>
     </section>
 
+    <!-- Available buses -->
     <h2>Available Buses</h2>
 
+    <!-- Express Travels -->
     <section class="bus-card">
         <div class="bus-info">
             <h3 class="bus-name">Express Travels</h3>
-            <p class="bus-description">Comfortable intercity travel</p>
+            <p class="bus-description">
+                Comfortable intercity travel
+            </p>
         </div>
 
         <div class="bus-action">
             <p class="price">₹750</p>
+
             <a class="select-button"
                th:href="@{/seats(source=${source},destination=${destination},journeyDate=${journeyDate},busName='Express Travels',price=750)}">
                 Select Seats
@@ -210,14 +243,18 @@
         </div>
     </section>
 
+    <!-- Royal Roadways -->
     <section class="bus-card">
         <div class="bus-info">
             <h3 class="bus-name">Royal Roadways</h3>
-            <p class="bus-description">Relax and enjoy your journey</p>
+            <p class="bus-description">
+                Relax and enjoy your journey
+            </p>
         </div>
 
         <div class="bus-action">
             <p class="price">₹900</p>
+
             <a class="select-button"
                th:href="@{/seats(source=${source},destination=${destination},journeyDate=${journeyDate},busName='Royal Roadways',price=900)}">
                 Select Seats
@@ -225,14 +262,18 @@
         </div>
     </section>
 
+    <!-- City Connect -->
     <section class="bus-card">
         <div class="bus-info">
             <h3 class="bus-name">City Connect</h3>
-            <p class="bus-description">Affordable city-to-city travel</p>
+            <p class="bus-description">
+                Affordable city-to-city travel
+            </p>
         </div>
 
         <div class="bus-action">
             <p class="price">₹650</p>
+
             <a class="select-button"
                th:href="@{/seats(source=${source},destination=${destination},journeyDate=${journeyDate},busName='City Connect',price=650)}">
                 Select Seats
