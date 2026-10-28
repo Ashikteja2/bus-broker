@@ -1,206 +1,209 @@
 
-package com.busbooking.busbooking;
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Search Results | Bus Broker</title>
 
-import java.time.Duration;
-import java.time.LocalDate;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-public class BusSearchResultsTest {
-
-    WebDriver driver;
-    WebDriverWait wait;
-
-    @BeforeMethod
-    public void setUp() {
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-
-        wait = new WebDriverWait(
-                driver,
-                Duration.ofSeconds(10)
-        );
-    }
-
-    @Test
-    public void verifyBusSearchResults() {
-
-        // Step 1: Open homepage
-        driver.get("http://localhost:8082");
-
-        // Step 2: Select source city
-        Select source = new Select(
-                wait.until(d -> d.findElement(By.id("source")))
-        );
-        source.selectByVisibleText("Hyderabad");
-
-        // Step 3: Select destination city
-        Select destination = new Select(
-                driver.findElement(By.id("destination"))
-        );
-        destination.selectByVisibleText("Bengaluru");
-
-        // Step 4: Set a future journey date
-        String journeyDate = LocalDate.now()
-                .plusDays(7)
-                .toString();
-
-        WebElement dateElement =
-                driver.findElement(By.id("journeyDate"));
-
-        dateElement.sendKeys(journeyDate);
-
-        // If native date input entry is incorrect, set its value
-        // using the standard yyyy-MM-dd format.
-        if (!journeyDate.equals(dateElement.getAttribute("value"))) {
-            ((org.openqa.selenium.JavascriptExecutor) driver)
-                    .executeScript(
-                            "arguments[0].value = arguments[1];",
-                            dateElement,
-                            journeyDate
-                    );
+    <style>
+        * {
+            box-sizing: border-box;
         }
 
-        Assert.assertEquals(
-                dateElement.getAttribute("value"),
-                journeyDate,
-                "Journey date is incorrect"
-        );
-
-        // Step 5: Click Search buses
-        driver.findElement(
-                By.cssSelector("button.search-button")
-        ).click();
-
-        // Step 6: Wait for the search results route
-        wait.until(d ->
-                d.getCurrentUrl().contains("/search")
-        );
-
-        // Step 7: Verify route and date
-        WebElement route = wait.until(
-                d -> d.findElement(By.cssSelector(".route"))
-        );
-
-        String routeText = route.getText();
-
-        Assert.assertTrue(
-                routeText.contains("Hyderabad"),
-                "Source city is missing from results"
-        );
-
-        Assert.assertTrue(
-                routeText.contains("Bengaluru"),
-                "Destination city is missing from results"
-        );
-
-        Assert.assertTrue(
-                routeText.contains(journeyDate),
-                "Journey date is missing from results"
-        );
-
-        // Step 8: Verify all three bus cards are displayed
-        java.util.List<WebElement> busCards =
-                driver.findElements(By.cssSelector(".bus-card"));
-
-        Assert.assertEquals(
-                busCards.size(),
-                3,
-                "Expected exactly three bus cards"
-        );
-
-        // Step 9: Verify bus names and fares
-        verifyBus(
-                "Express Travels",
-                "₹750"
-        );
-
-        verifyBus(
-                "Royal Roadways",
-                "₹900"
-        );
-
-        verifyBus(
-                "City Connect",
-                "₹650"
-        );
-
-        // Step 10: Verify seat-selection links exist
-        java.util.List<WebElement> selectButtons =
-                driver.findElements(
-                        By.cssSelector(".bus-card a.select-button")
-                );
-
-        Assert.assertEquals(
-                selectButtons.size(),
-                3,
-                "Expected three Select Seats links"
-        );
-
-        for (WebElement button : selectButtons) {
-            Assert.assertTrue(
-                    button.isDisplayed(),
-                    "A Select Seats link is not visible"
-            );
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #202938;
         }
 
-        System.out.println("==================================");
-        System.out.println("PASS: Bus search results verified!");
-        System.out.println("Route: " + routeText);
-        System.out.println("Journey Date: " + journeyDate);
-        System.out.println("Bus cards found: " + busCards.size());
-        System.out.println("Express Travels: ₹750");
-        System.out.println("Royal Roadways: ₹900");
-        System.out.println("City Connect: ₹650");
-        System.out.println("Select Seats links: " + selectButtons.size());
-        System.out.println("==================================");
-    }
-
-    private void verifyBus(String busName, String expectedPrice) {
-
-        WebElement busCard = driver.findElements(
-                By.cssSelector(".bus-card")
-        ).stream()
-         .filter(card -> card.findElement(
-                 By.cssSelector(".bus-name")
-         ).getText().equals(busName))
-         .findFirst()
-         .orElseThrow(() -> new AssertionError(
-                 "Bus not found: " + busName
-         ));
-
-        String actualPrice = busCard.findElement(
-                By.cssSelector(".price")
-        ).getText();
-
-        Assert.assertEquals(
-                actualPrice,
-                expectedPrice,
-                "Incorrect fare for " + busName
-        );
-
-        Assert.assertTrue(
-                busCard.findElement(
-                        By.cssSelector("a.select-button")
-                ).getAttribute("href").contains("/seats"),
-                "Select Seats link is incorrect for " + busName
-        );
-    }
-
-    @AfterMethod
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
+        header {
+            background: #123b70;
+            color: white;
+            padding: 22px 8%;
         }
-    }
-}
+
+        header h1 {
+            margin: 0;
+            font-size: 27px;
+        }
+
+        header p {
+            margin-bottom: 0;
+            color: #dce8f8;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1050px;
+            margin: 30px auto;
+        }
+
+        .route-box {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 3px 12px #0000000d;
+        }
+
+        .route {
+            font-size: 23px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .journey-date {
+            color: #586579;
+        }
+
+        .bus-card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 3px 12px #0000000d;
+        }
+
+        .bus-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .bus-description {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .price {
+            font-size: 23px;
+            font-weight: bold;
+            color: #123b70;
+            margin-bottom: 12px;
+        }
+
+        .select-button {
+            display: inline-block;
+            background: #1769d2;
+            color: white;
+            padding: 11px 18px;
+            text-decoration: none;
+            border-radius: 7px;
+            font-weight: bold;
+        }
+
+        .select-button:hover {
+            background: #0e4da4;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #1769d2;
+            text-decoration: none;
+        }
+
+        footer {
+            text-align: center;
+            color: #64748b;
+            padding: 25px;
+        }
+
+        @media (max-width: 600px) {
+            .bus-card {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .route {
+                font-size: 19px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Bus Broker</h1>
+    <p>Find your bus and book your journey</p>
+</header>
+
+<main class="container">
+
+    <section class="route-box">
+        <div class="route">
+            <span th:text="${source}">Hyderabad</span>
+            →
+            <span th:text="${destination}">Bengaluru</span>
+        </div>
+
+        <div class="journey-date">
+            Journey Date:
+            <span th:text="${journeyDate}">2026-11-04</span>
+        </div>
+    </section>
+
+    <h2>Available Buses</h2>
+
+    <section class="bus-card">
+        <div>
+            <div class="bus-name">Express Travels</div>
+            <div class="bus-description">Comfortable intercity travel</div>
+        </div>
+
+        <div>
+            <div class="price">₹750</div>
+            <a class="select-button"
+               th:href="@{/seats(source=${source},destination=${destination},journeyDate=${journeyDate},busName='Express Travels',price=750)}">
+                Select Seats
+            </a>
+        </div>
+    </section>
+
+    <section class="bus-card">
+        <div>
+            <div class="bus-name">Royal Roadways</div>
+            <div class="bus-description">Relax and enjoy your journey</div>
+        </div>
+
+        <div>
+            <div class="price">₹900</div>
+            <a class="select-button"
+               th:href="@{/seats(source=${source},destination=${destination},journeyDate=${journeyDate},busName='Royal Roadways',price=900)}">
+                Select Seats
+            </a>
+        </div>
+    </section>
+
+    <section class="bus-card">
+        <div>
+            <div class="bus-name">City Connect</div>
+            <div class="bus-description">Affordable city-to-city travel</div>
+        </div>
+
+        <div>
+            <div class="price">₹650</div>
+            <a class="select-button"
+               th:href="@{/seats(source=${source},destination=${destination},journeyDate=${journeyDate},busName='City Connect',price=650)}">
+                Select Seats
+            </a>
+        </div>
+    </section>
+
+    <a class="back-link" th:href="@{/}">← Back to Home</a>
+
+</main>
+
+<footer>
+    © 2026 Bus Broker | Demo Booking Website
+</footer>
+
+</body>
+</html>
