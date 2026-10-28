@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bus Search Results | Bus Broker</title>
+    <title>Bus Search Results - Bus Broker</title>
 
     <style>
         * {
@@ -14,115 +14,158 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: #f3f6fb;
-            color: #202938;
+            color: #172b45;
+            background-image:
+                linear-gradient(
+                    rgba(240, 245, 252, 0.80),
+                    rgba(240, 245, 252, 0.80)
+                ),
+                url('/images/bus-background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
         }
 
         header {
-            background: #123b70;
+            background: #173f70;
             color: white;
-            padding: 22px 8%;
+            padding: 24px 8%;
         }
 
         header h1 {
-            margin: 0;
-            font-size: 27px;
+            margin: 0 0 16px;
+            font-size: 30px;
         }
 
         header p {
-            margin-bottom: 0;
-            color: #dce8f8;
+            margin: 0;
+            font-size: 17px;
         }
 
-        .container {
+        main {
             width: 90%;
-            max-width: 1050px;
-            margin: 30px auto;
+            max-width: 1150px;
+            margin: 32px auto;
         }
 
-        .route-box {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 3px 12px #0000000d;
+        .route-card,
+        .bus-card {
+            background: rgba(255, 255, 255, 0.94);
+            border-radius: 14px;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        .route-card {
+            padding: 26px;
+            margin-bottom: 25px;
         }
 
         .route {
-            font-size: 23px;
+            margin: 0 0 12px;
+            font-size: 25px;
             font-weight: bold;
-            margin-bottom: 12px;
         }
 
         .journey-date {
-            color: #586579;
+            margin: 0;
+            color: #52677f;
+            font-size: 16px;
+        }
+
+        h2 {
+            margin: 25px 0 20px;
+            font-size: 27px;
         }
 
         .bus-card {
-            background: white;
-            border-radius: 12px;
-            padding: 22px;
-            margin-bottom: 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 20px;
-            box-shadow: 0 3px 12px #0000000d;
+            padding: 25px;
+            margin-bottom: 18px;
+        }
+
+        .bus-info {
+            flex: 1;
         }
 
         .bus-name {
-            font-size: 20px;
+            margin: 0 0 8px;
+            font-size: 21px;
             font-weight: bold;
-            margin-bottom: 8px;
         }
 
         .bus-description {
-            color: #64748b;
-            font-size: 14px;
+            margin: 0;
+            color: #52677f;
+            font-size: 15px;
+        }
+
+        .bus-action {
+            min-width: 145px;
+            text-align: left;
         }
 
         .price {
-            font-size: 23px;
+            margin: 0 0 14px;
+            color: #173f70;
+            font-size: 25px;
             font-weight: bold;
-            color: #123b70;
-            margin-bottom: 12px;
         }
 
         .select-button {
             display: inline-block;
             background: #1769d2;
             color: white;
-            padding: 11px 18px;
             text-decoration: none;
-            border-radius: 7px;
             font-weight: bold;
+            padding: 13px 20px;
+            border-radius: 8px;
+            text-align: center;
+            white-space: nowrap;
         }
 
         .select-button:hover {
-            background: #0e4da4;
+            background: #0d4fa8;
         }
 
         .back-link {
             display: inline-block;
-            margin-top: 15px;
-            color: #1769d2;
+            margin: 8px 0 30px;
+            color: #173f70;
+            font-weight: bold;
             text-decoration: none;
         }
 
-        footer {
-            text-align: center;
-            color: #64748b;
-            padding: 25px;
-        }
-
         @media (max-width: 600px) {
+            header {
+                padding: 22px 5%;
+            }
+
+            main {
+                width: 92%;
+                margin: 22px auto;
+            }
+
             .bus-card {
                 align-items: flex-start;
                 flex-direction: column;
+                padding: 22px;
+            }
+
+            .bus-action {
+                width: 100%;
             }
 
             .route {
-                font-size: 19px;
+                font-size: 22px;
+            }
+
+            h2 {
+                font-size: 24px;
             }
         }
     </style>
@@ -135,31 +178,31 @@
     <p>Find your bus and book your journey</p>
 </header>
 
-<main class="container">
+<main>
 
-    <section class="route-box">
-        <div class="route">
-            <span th:text="${source}">Hyderabad</span>
+    <section class="route-card">
+        <h2 class="route">
+            <span th:text="${source}">Pune</span>
             →
-            <span th:text="${destination}">Bengaluru</span>
-        </div>
+            <span th:text="${destination}">Rajahmundry</span>
+        </h2>
 
-        <div class="journey-date">
+        <p class="journey-date">
             Journey Date:
-            <span th:text="${journeyDate}">2026-11-04</span>
-        </div>
+            <span th:text="${journeyDate}">2026-11-13</span>
+        </p>
     </section>
 
     <h2>Available Buses</h2>
 
     <section class="bus-card">
-        <div>
-            <div class="bus-name">Express Travels</div>
-            <div class="bus-description">Comfortable intercity travel</div>
+        <div class="bus-info">
+            <h3 class="bus-name">Express Travels</h3>
+            <p class="bus-description">Comfortable intercity travel</p>
         </div>
 
-        <div>
-            <div class="price">₹750</div>
+        <div class="bus-action">
+            <p class="price">₹750</p>
             <a class="select-button"
                th:href="@{/seats(source=${source},destination=${destination},journeyDate=${journeyDate},busName='Express Travels',price=750)}">
                 Select Seats
@@ -168,13 +211,13 @@
     </section>
 
     <section class="bus-card">
-        <div>
-            <div class="bus-name">Royal Roadways</div>
-            <div class="bus-description">Relax and enjoy your journey</div>
+        <div class="bus-info">
+            <h3 class="bus-name">Royal Roadways</h3>
+            <p class="bus-description">Relax and enjoy your journey</p>
         </div>
 
-        <div>
-            <div class="price">₹900</div>
+        <div class="bus-action">
+            <p class="price">₹900</p>
             <a class="select-button"
                th:href="@{/seats(source=${source},destination=${destination},journeyDate=${journeyDate},busName='Royal Roadways',price=900)}">
                 Select Seats
@@ -183,13 +226,13 @@
     </section>
 
     <section class="bus-card">
-        <div>
-            <div class="bus-name">City Connect</div>
-            <div class="bus-description">Affordable city-to-city travel</div>
+        <div class="bus-info">
+            <h3 class="bus-name">City Connect</h3>
+            <p class="bus-description">Affordable city-to-city travel</p>
         </div>
 
-        <div>
-            <div class="price">₹650</div>
+        <div class="bus-action">
+            <p class="price">₹650</p>
             <a class="select-button"
                th:href="@{/seats(source=${source},destination=${destination},journeyDate=${journeyDate},busName='City Connect',price=650)}">
                 Select Seats
@@ -197,13 +240,9 @@
         </div>
     </section>
 
-    <a class="back-link" th:href="@{/}">← Back to Home</a>
+    <a href="/" class="back-link">← Back to Search</a>
 
 </main>
-
-<footer>
-    © 2026 Bus Broker | Demo Booking Website
-</footer>
 
 </body>
 </html>
